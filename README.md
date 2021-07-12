@@ -2,6 +2,8 @@
 
 This exercise is to test your coding style, best practices, design patter and design principles.
 
+We hope you can spend about two hours on this project. If you can finish faster — great! If not, limit yourself and don't spend much longer than 2 hours MAX.
+
 ## Description
 
 We want you to build a service in charge of sending 2 email digests containing deals to our contacts.
