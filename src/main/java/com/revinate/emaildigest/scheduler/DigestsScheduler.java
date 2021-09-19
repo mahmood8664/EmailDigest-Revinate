@@ -1,19 +1,36 @@
 package com.revinate.emaildigest.scheduler;
 
+import com.revinate.emaildigest.contact.model.Contact;
+import com.revinate.emaildigest.contact.service.ContactService;
+import com.revinate.emaildigest.digest.DigestService;
+import com.revinate.emaildigest.digest.TemplateKey;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Iterator;
+import java.util.List;
+
 @Component
+@AllArgsConstructor
 @Slf4j
 public class DigestsScheduler {
+
+    private final ContactService contactService;
+    private final DigestService digestServiceImpl;
+
     @Scheduled(cron = "0 0 7 * * *")
     public void sendDailyDigests() {
-        // ADD CODE HERE
+        Iterator<List<Contact>> paginatedContacts = contactService.getPaginatedContacts(100);
+        paginatedContacts.forEachRemaining(contacts -> contacts.forEach(contact ->
+                digestServiceImpl.prepareAndSendEmail(contact, TemplateKey.DAILY_EMAIL)));
     }
 
     @Scheduled(cron = "0 0 7 * * 1")
     public void sendWeeklyDigests() {
-        // ADD CODE HERE
+        Iterator<List<Contact>> paginatedContacts = contactService.getPaginatedContacts(100);
+        paginatedContacts.forEachRemaining(contacts -> contacts.forEach(contact ->
+                digestServiceImpl.prepareAndSendEmail(contact, TemplateKey.WEEKLY_EMAIL)));
     }
 }
