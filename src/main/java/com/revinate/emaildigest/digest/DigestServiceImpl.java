@@ -23,11 +23,22 @@ class DigestServiceImpl implements DigestService {
 
     @Override
     public void prepareAndSendEmail(Contact contact, TemplateKey templateKey) {
-        List<Deal> dailyDealsByEmail = dealService.getDailyDealsByEmail(contact.getEmail());
-        if (dailyDealsByEmail.size() != 0) {
+        List<Deal> deals;
+        switch (templateKey) {
+            case DAILY_EMAIL:
+                deals = dealService.getDailyDealsByEmail(contact.getEmail());
+                break;
+            case WEEKLY_EMAIL:
+                deals = dealService.getWeeklyDealsByEmail(contact.getEmail());
+                break;
+            default:
+                throw new RuntimeException("Invalid TemplateKey");
+        }
+
+        if (deals.size() != 0) {
             Email email = templateManger.prepareEmail(templateKey, new EmailContext()
                     .setContactFirstName(contact.getFirstName())
-                    .setDeals(dailyDealsByEmail)
+                    .setDeals(deals)
             );
             emailService.sendEmail(email, contact.getEmail());
         }
